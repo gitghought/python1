@@ -49,4 +49,17 @@ except Exception as e:
 print("good")
 
 
+class MyException (ZeroDivisionError) :
+    print("myexception")
+    pass
 
+
+try:
+    a = 10 / 0
+except MyException as me :
+    print("myexception -> {0}".format(me))
+finally:
+    print("finally")
+
+
+print("enc")
