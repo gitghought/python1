@@ -30,17 +30,41 @@ def getStudentDegradeCount(studentName) :
 def getStudentName (line) :
     return line[nameColumnNumber]
 
+#求理论和技能的满月平均成绩
 def getAverageScore (scoreTheryAverage, scoreSkillAverage) :
     return (scoreSkillAverage + scoreTheryAverage) / 2
 
+#根据指定成绩单，求指定天数的平均成绩
+#既可以求理论平均成绩，又可以求技能平均成绩
 def getAverageScoreByDays(scoreList, nday) :
     sum = 0
 
-    for s in scoreList[:nday] :
-        sum += s
+    try:
+        for s in scoreList[:nday] :
+            if s == "请假" or s == "作弊" or s == "旷考" or s == "休学":
+                sum += 0
+            else :
+                sum += s
+    except TypeError as e:
+        pass
 
     return sum / nday
 
+#能够求理论|技能5日的均分
+def getFiveDayAverageScore(scoreList) :
+    return getAverageScoreByDays(scoreList,5)
+
+#能够求理论|技能10日的均分
+def getTenDayAverageScore(scoreList) :
+    return getAverageScoreByDays(scoreList,10)
+
+#能够求理论|技能15日的均分
+def getFiftenDayAverageScore(scoreList) :
+    return getAverageScoreByDays(scoreList,15)
+
+#能够求理论|技能满月的均分
+def getMonthAverageScore(scoreList) :
+    return getAverageScoreByDays(scoreList,len(scoreList))
 
 # 根据给定的成绩列表，求出平均成绩
 # 本方法主要用于统计单科成绩的平均值
@@ -113,27 +137,35 @@ if __name__ == '__main__':
 
     sheet0 = workBook.sheet_by_name(scoreSheetName)
 
-    rowValues = sheet0.row_values(8)
-    if isNoneLine(rowValues) :
-        pass
-    else :
-        print("rowValues = {rowValues}".format(rowValues = rowValues))
-        # print(type(rowValues))
+    for i in range(studentScoreStartPos, studentScoreStopPos):
+        # print(i)
+        rowValues = sheet0.row_values(i)
+        if isNoneLine(rowValues) :
+            pass
+        else :
+            print("rowValues = {rowValues}".format(rowValues = rowValues))
+            # print(type(rowValues))
 
-        studentName = getStudentName(rowValues)
-        print("studentName = {studentName}".format(studentName = studentName))
+            studentName = getStudentName(rowValues)
+            print("studentName = {studentName}".format(studentName = studentName))
 
-        scoreEveryDay = getEveryDayScoreFromLine(rowValues)
+            scoreEveryDay = getEveryDayScoreFromLine(rowValues)
 
-        scoreEveryDayThery = getEveryDayTheryScore(scoreEveryDay)
-        scoreEveryDaySkill = getEveryDaySkillScore(scoreEveryDay)
+            scoreEveryDayThery = getEveryDayTheryScore(scoreEveryDay)
+            scoreEveryDaySkill = getEveryDaySkillScore(scoreEveryDay)
 
-        scoreTheryAverage = getTheryAverageScore(scoreEveryDayThery)
-        print("scoreTheryAverage = " + str(scoreTheryAverage))
+            fiveDayTheryAvg = getFiveDayAverageScore(scoreEveryDayThery)
+            fiveDaySkillAvg = getFiveDayAverageScore(scoreEveryDaySkill)
 
-        scoreSkillAverage = getSkillAverageScore(scoreEveryDaySkill)
-        print("scoreSkillAverage = " + str(scoreSkillAverage))
+            # print("fiveDayTheryAvg = {fiveDayTheryAvg}".format(fiveDayTheryAvg=fiveDayTheryAvg))
+            # print("fiveDaySkillAvg = {fiveDaySkillAvg}".format(fiveDaySkillAvg=fiveDaySkillAvg))
 
-        avgScore = getAverageScore(scoreTheryAverage, scoreSkillAverage)
-        print("avgScore = {avgScore}".format(avgScore = avgScore))
+            monthDayTheryAvg = getMonthAverageScore(scoreEveryDayThery)
+            monthDaySkillAvg = getMonthAverageScore(scoreEveryDaySkill)
+
+            # print("monthDayTheryAvg = {monthDayTheryAvg}".format(monthDayTheryAvg=monthDayTheryAvg))
+            # print("monthDaySkillAvg = {monthDaySkillAvg}".format(monthDaySkillAvg=monthDaySkillAvg))
+
+            avgScore = getAverageScore(monthDaySkillAvg, monthDayTheryAvg)
+            print("avgScore = {avgScore}".format(avgScore=avgScore))
 
