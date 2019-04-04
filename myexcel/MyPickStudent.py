@@ -16,6 +16,9 @@ degradeStudentCountColumnNumber = nameColumnNumber - 1
 def getStudentDegradeCount(studentName) :
     pass
 
+def getStudentName (line) :
+    return line[nameColumnNumber]
+
 def getAverageScore (scoreTheryAverage, scoreSkillAverage) :
     return (scoreSkillAverage + scoreTheryAverage) / 2
 
@@ -59,7 +62,7 @@ def getTheryAverageScore (scoreList) :
 # 从每天的成绩中筛选出每天的技能成绩
 def getEveryDaySkillScore (scoreEveryDay) :
     scoreEveryDaySkill = scoreEveryDay[1::2]
-    print(scoreEveryDaySkill)
+    # print(scoreEveryDaySkill)
 
     return scoreEveryDaySkill
 
@@ -67,7 +70,7 @@ def getEveryDaySkillScore (scoreEveryDay) :
 # 从每天的成绩中筛选出每天的理论成绩
 def getEveryDayTheryScore (scoreEveryDay) :
     scoreEveryDayThery = scoreEveryDay[::2]
-    print(scoreEveryDayThery)
+    # print(scoreEveryDayThery)
 
     return scoreEveryDayThery
 
@@ -79,25 +82,36 @@ def getEveryDayScoreFromLine(line) :
 
     return scoreEveryDay
 
+# 判断当前读取的一行是否是空行或者是无效行
+def isNoneLine(line) :
+    if line[nameColumnNumber] == "" :
+        return True
+
 if __name__ == '__main__':
     workBook = xlrd.open_workbook(scoreExcelSrc)
 
     sheet0 = workBook.sheet_by_name(scoreSheetName)
 
-    rowValues = sheet0.row_values(9)
-    # print("rowValues = {rowValues}".format(rowValues = rowValues))
-    # print(type(rowValues))
+    rowValues = sheet0.row_values(13)
+    if isNoneLine(rowValues) :
+        pass
+    else :
+        print("rowValues = {rowValues}".format(rowValues = rowValues))
+        # print(type(rowValues))
 
-    scoreEveryDay = getEveryDayScoreFromLine(rowValues)
+        studentName = getStudentName(rowValues)
+        print("studentName = {studentName}".format(studentName = studentName))
 
-    scoreEveryDayThery = getEveryDayTheryScore(scoreEveryDay)
+        scoreEveryDay = getEveryDayScoreFromLine(rowValues)
 
-    scoreEveryDaySkill = getEveryDaySkillScore(scoreEveryDay)
+        scoreEveryDayThery = getEveryDayTheryScore(scoreEveryDay)
 
-    scoreTheryAverage = getTheryAverageScore(scoreEveryDayThery)
+        scoreEveryDaySkill = getEveryDaySkillScore(scoreEveryDay)
 
-    scoreSkillAverage = getSkillAverageScore(scoreEveryDaySkill)
+        scoreTheryAverage = getTheryAverageScore(scoreEveryDayThery)
 
-    avgScore = getAverageScore(scoreTheryAverage, scoreSkillAverage)
-    print("avgScore = {avgScore}".format(avgScore = avgScore))
+        scoreSkillAverage = getSkillAverageScore(scoreEveryDaySkill)
+
+        avgScore = getAverageScore(scoreTheryAverage, scoreSkillAverage)
+        print("avgScore = {avgScore}".format(avgScore = avgScore))
 
