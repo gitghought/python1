@@ -5,6 +5,7 @@ from docx import Document
 import os
 import urllib.request
 import docx
+from docx.enum.text import WD_BREAK
 
 from docx.shared import Inches
 
@@ -85,8 +86,14 @@ def readMySQLAndWriteQuestToWord(document, qsnId) :
             document.save(alwaysMistakeQuestion)
 
         else :
+            # 获取题干
+
+
             #如果没有图片，则直接将题干写入到文件中
-            para = writeToWordParagraph(document, dat[1], alwaysMistakeQuestion)
+            # para = writeToWordParagraph(document, dat[1], alwaysMistakeQuestion)
+            mPara = document.add_paragraph(dat[1], style="List Number")
+            document.save(alwaysMistakeQuestion)
+
 
         #从mysql服务器中读取指定题的选项
         print(dat)
@@ -95,22 +102,25 @@ def readMySQLAndWriteQuestToWord(document, qsnId) :
         choicePreList = ["A:","B:","C:","D:"]
 
         for i in range (1,5) :
+
+            mpara = document.add_paragraph(choicePreList[i-1])
+
+
             if dat[2].find("img src") != -1 :
+                run = mpara.add_run()
+
                 print("选项中有图片")
 
                 dictChoices = json.loads(dat[2])
 
                 choicePath = getPhotoPath(dictChoices["{pos}".format(pos=i)]["xx"])
 
-                mpara = document.add_paragraph(choicePreList[i-1])
-
-                run = mpara.add_run()
 
                 try :
                     print("choicePath = " + choicePath)
                     writePhoto(choiceFileList[i-1], readPhoto(serverPrePath, choicePath))
                     # writeToWordPhoto(document, choiceFileList[i-1])
-                    writeToWordPhotoRun(run, choiceFileList[i-1])
+                    writeToWordPhotoRunWithWidth(run, choiceFileList[i-1], 1)
                 except TypeError as e:
                     print("有异常发生")
                     # writeToWordParagraph(document, dictChoices["{pos}".format(pos = i)]["xx"], alwaysMistakeQuestion)
@@ -118,12 +128,16 @@ def readMySQLAndWriteQuestToWord(document, qsnId) :
 
 
             else :
+
                 print("选项中没有图片")
 
                 # 如果没有图片，则直接将选项写入到文件中
                 dictChoices = json.loads(dat[2])
 
-                writeToWordParagraph(document, dictChoices["{pos}".format(pos = i)]["xx"], alwaysMistakeQuestion)
+                run = mpara.add_run(dictChoices["{pos}".format(pos = i)]["xx"])
+
+                # writeToWordParagraph(document, dictChoices["{pos}".format(pos = i)]["xx"], alwaysMistakeQuestion)
+                document.save(alwaysMistakeQuestion)
 
         #关闭所有已经打开的文件
         # 防止因为文件忘记关闭导致的内存泄漏
@@ -131,6 +145,10 @@ def readMySQLAndWriteQuestToWord(document, qsnId) :
         bChoiceFile.close()
         cChoiceFile.close()
         dChoiceFile.close()
+
+        document.add_paragraph().add_run().add_break(WD_BREAK.PAGE)
+        document.save(alwaysMistakeQuestion)
+
 
 # 将从数据库中获取的字符串通过切片的方式，拿到里面的图片路径
 # 该路径是在服务器端保存图片的绝对路径
@@ -152,9 +170,8 @@ def getPhotoPath(dat) :
 
 #向word文件中写入文本
 #没有关闭document流对象
-def writeToWordParagraphRun(run, content, targetFile) :
-    pass
-    # para = run.add_run(content)
+def writeToWordParagraphRun(document, content, targetFile) :
+    document.paragraphs[0].add_run("content")
 
 #向word文件中写入文本
 #没有关闭document流对象
@@ -164,6 +181,12 @@ def writeToWordParagraph(document, content, targetFile) :
 
     return para
 
+
+#向word文件中写入图片
+#没有关闭document流对象
+def writeToWordPhotoRunWithWidth(run, titleFile, minches) :
+    # document.paragraphs
+    run.add_picture(titleFile, width=Inches(minches))
 
 #向word文件中写入图片
 #没有关闭document流对象
