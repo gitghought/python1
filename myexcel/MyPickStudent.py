@@ -16,19 +16,60 @@ degradeStudentCountColumnNumber = nameColumnNumber - 1
 def getStudentDegradeCount(studentName) :
     pass
 
+def getAverageScore (scoreTheryAverage, scoreSkillAverage) :
+    return (scoreSkillAverage + scoreTheryAverage) / 2
+
+# 根据给定的成绩列表，求出平均成绩
+# 本方法主要用于统计单科成绩的平均值
+# 如求理论平均分或者技能平均分
+"""
+求出技能的平均成绩
+"""
+def getSkillAverageScore (scoreList) :
+    sum = 0
+
+    for s in scoreList :
+        sum += s
+
+    avgScore = sum / len(scoreList)
+
+    print(avgScore)
+
+    return avgScore
+
+
+# 根据给定的成绩列表，求出平均成绩
+# 本方法主要用于统计单科成绩的平均值
+# 如求理论平均分或者技能平均分
+"""
+求出理论的平均成绩
+"""
 def getTheryAverageScore (scoreList) :
-    pass
+    sum = 0
+
+    for s in scoreList :
+        sum += s
+
+    avgScore = sum / len(scoreList)
+
+    print(avgScore)
+
+    return avgScore
 
 # 从每天的成绩中筛选出每天的技能成绩
 def getEveryDaySkillScore (scoreEveryDay) :
     scoreEveryDaySkill = scoreEveryDay[1::2]
     print(scoreEveryDaySkill)
 
+    return scoreEveryDaySkill
+
 
 # 从每天的成绩中筛选出每天的理论成绩
 def getEveryDayTheryScore (scoreEveryDay) :
     scoreEveryDayThery = scoreEveryDay[::2]
     print(scoreEveryDayThery)
+
+    return scoreEveryDayThery
 
 #获取完一行数据后，使用切片，将学生每天的成绩取出来
 #   数据包含日考、周考和月考
@@ -49,6 +90,14 @@ if __name__ == '__main__':
 
     scoreEveryDay = getEveryDayScoreFromLine(rowValues)
 
-    getEveryDayTheryScore(scoreEveryDay)
+    scoreEveryDayThery = getEveryDayTheryScore(scoreEveryDay)
 
-    getEveryDaySkillScore(scoreEveryDay)
+    scoreEveryDaySkill = getEveryDaySkillScore(scoreEveryDay)
+
+    scoreTheryAverage = getTheryAverageScore(scoreEveryDayThery)
+
+    scoreSkillAverage = getSkillAverageScore(scoreEveryDaySkill)
+
+    avgScore = getAverageScore(scoreTheryAverage, scoreSkillAverage)
+    print("avgScore = {avgScore}".format(avgScore = avgScore))
+
