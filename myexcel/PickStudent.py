@@ -16,6 +16,8 @@ class PickStudent ():
     # 在成绩单一栏中，学生成绩结束的行号
     studentScoreStopPos = studentScoreStartPos + studentLimitation
 
+    # 末班学生次数统计数的列号
+    degradeStudentCountColumnNumber = nameColumnNumber - 1
 
     def __init__(self):
         pass
@@ -30,7 +32,6 @@ class PickStudent ():
     def getSheetByName(this, sheetName):
         this.sheet = this.workbook.sheet_by_name(sheetName)
         return this.sheet
-
 
     # 从已经打开的表格种获取指定行的所有列的值
     # 所有的列的值都存储在一个列表种
@@ -50,6 +51,10 @@ class PickStudent ():
     # 值：学生姓名
     def getStudentNameTuple(this, line):
         return ("sname", line[this.nameColumnNumber])
+
+    # 返回指定学生名的末班次数
+    def getStudentDegradeCount(this):
+        return ("degradeCount", this.rowValueList[this.nameColumnNumber])
 
     # 根据指定成绩单，求指定天数的平均成绩
     # 既可以求理论平均成绩，又可以求技能平均成绩
@@ -71,6 +76,81 @@ class PickStudent ():
     # 获取完一行数据后，使用切片，将学生每天的成绩取出来
     #   数据包含日考、周考和月考
     def getEveryDayScoreFromLine(this, line):
-        scoreEveryDay = line[this.nameColumnNumber + 1:len(line) - 1]
+        this.scoreEveryDay = line[this.nameColumnNumber + 1:len(line) - 1]
 
-        return scoreEveryDay
+        return this.scoreEveryDay
+
+    # 从每天的成绩中筛选出每天的理论成绩
+    def getEveryDayTheryScore(this):
+        this.scoreEveryDayThery = this.scoreEveryDay[::2]
+        # print(scoreEveryDayThery)
+
+        return this.scoreEveryDayThery
+
+    # 从每天的成绩中筛选出每天的技能成绩
+    def getEveryDaySkillScore(this):
+        this.scoreEveryDaySkill = this.scoreEveryDay[1::2]
+
+        return this.scoreEveryDaySkill
+
+    # 能够求理论5日的均分
+    def getFiveDayTheryAverageScore(this):
+        return this.__getAverageScoreByDays(this.scoreEveryDayThery, 5)
+
+    # 能够求技能5日的均分
+    def getFiveDaySkillAverageScore(this):
+        return this.__getAverageScoreByDays(this.scoreEveryDaySkill, 5)
+
+    # 能够求理论10日的均分
+    def getTenDayTheryAverageScore(this):
+        return this.__getAverageScoreByDays(this.scoreEveryDayThery, 10)
+
+    # 能够求技能10日的均分
+    def getTenDaySkillAverageScore(this):
+        return this.__getAverageScoreByDays(this.scoreEveryDaySkill, 10)
+
+    # 能够求理论15日的均分
+    def getFifteenDayTheryAverageScore(this):
+        return this.__getAverageScoreByDays(this.scoreEveryDayThery, 15)
+
+    # 能够求技能15日的均分
+    def getFifteenDaySkillAverageScore(this):
+        return this.__getAverageScoreByDays(this.scoreEveryDaySkill, 15)
+
+
+    # 能够求理论月的均分
+    def getMonthTheryAverageScore(this):
+        try :
+            monthTheryAvgScore = this.__getAverageScoreByDays( \
+                this.scoreEveryDayThery, len(this.scoreEveryDayThery))
+        except AttributeError as e :
+            this.getEveryDayTheryScore()
+        else :
+            return monthTheryAvgScore
+        finally  :
+            monthTheryAvgScore = this.__getAverageScoreByDays( \
+                this.scoreEveryDayThery, len(this.scoreEveryDayThery))
+
+            return monthTheryAvgScore
+
+    # 能够求技能月的均分
+    def getMonthSkillAverageScore(this):
+        try :
+            monthSkillAvgScore = this.__getAverageScoreByDays( \
+                this.scoreEveryDaySkill, len(this.scoreEveryDaySkill))
+        except AttributeError as e :
+            this.getEveryDaySkillScore()
+        else :
+            return monthSkillAvgScore
+        finally :
+            monthSkillAvgScore = this.__getAverageScoreByDays( \
+                this.scoreEveryDaySkill, len(this.scoreEveryDaySkill))
+
+            return monthSkillAvgScore
+
+
+    # 求理论和技能的满月平均成绩
+    def getAverageScore(this):
+        return (this.getMonthTheryAverageScore() +  \
+        this.getMonthSkillAverageScore()) / 2
+        # return (scoreSkillAverage + scoreTheryAverage) / 2
