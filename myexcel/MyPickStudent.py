@@ -142,6 +142,19 @@ def isNoneLine(line) :
         return True
 
 class PickStudent :
+    # 按照表格的名称来获取指定的表格
+    scoreSheetName = u"成绩单"
+
+    # 在一个班级里，最多允许有60人
+    studentLimitation = 60
+
+    # 在成绩单一栏中，学生成绩开始的行号
+    studentScoreStartPos = 8
+
+    # 在成绩单一栏中，学生成绩结束的行号
+    studentScoreStopPos = studentScoreStartPos + studentLimitation
+
+
     def __init__(self):
         pass
 
@@ -156,6 +169,14 @@ class PickStudent :
         this.sheet = this.workbook.sheet_by_name(sheetName)
         return this.sheet
 
+
+    # 从已经打开的表格种获取指定行的所有列的值
+    # 所有的列的值都存储在一个列表种
+    def getRowValues(this, rowNumber):
+        this.rowValueList = this.sheet.row_values(rowNumber)
+
+        return this.rowValueList
+
 if __name__ == '__main__':
     mps = PickStudent()
 
@@ -163,11 +184,13 @@ if __name__ == '__main__':
     workBook = mps.myXlsOpen(scoreExcelSrc)
 
     # sheet0 = workBook.sheet_by_name(scoreSheetName)
-    sheet0 = mps.getSheetByName(scoreSheetName)
+    sheet0 = mps.getSheetByName(PickStudent.scoreSheetName)
 
     for i in range(studentScoreStartPos, studentScoreStopPos):
         # print(i)
-        rowValues = sheet0.row_values(i)
+        # rowValues = sheet0.row_values(i)
+        rowValues = mps.getRowValues(i)
+
         if isNoneLine(rowValues) :
             pass
         else :
