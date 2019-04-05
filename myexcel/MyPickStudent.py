@@ -22,6 +22,7 @@ nameColumnNumber = 6
 #末班学生次数统计数的列号
 degradeStudentCountColumnNumber = nameColumnNumber - 1
 
+
 #返回指定学生名的末班次数
 def getStudentDegradeCount(studentName) :
     pass
@@ -140,10 +141,29 @@ def isNoneLine(line) :
     if line[nameColumnNumber] == "" :
         return True
 
-if __name__ == '__main__':
-    workBook = xlrd.open_workbook(scoreExcelSrc)
+class PickStudent :
+    def __init__(self):
+        pass
 
-    sheet0 = workBook.sheet_by_name(scoreSheetName)
+    #根据文件路径打开Excel表格文件
+    def myXlsOpen(this, path):
+        this.workbook = xlrd.open_workbook(path)
+        return this.workbook
+
+    #打开Excel表格文件中的指定表格
+    # 返回指定表格对象
+    def getSheetByName(this, sheetName):
+        this.sheet = this.workbook.sheet_by_name(sheetName)
+        return this.sheet
+
+if __name__ == '__main__':
+    mps = PickStudent()
+
+    # workBook = xlrd.open_workbook(scoreExcelSrc)
+    workBook = mps.myXlsOpen(scoreExcelSrc)
+
+    # sheet0 = workBook.sheet_by_name(scoreSheetName)
+    sheet0 = mps.getSheetByName(scoreSheetName)
 
     for i in range(studentScoreStartPos, studentScoreStopPos):
         # print(i)
@@ -154,7 +174,10 @@ if __name__ == '__main__':
             print("rowValues = {rowValues}".format(rowValues = rowValues))
             # print(type(rowValues))
 
-            studentName = getStudentName(rowValues)
+            # studentName = getStudentName(rowValues)
+            # print("studentName = {studentName}".format(studentName = studentName))
+
+            studentName = getStudentNameTuple(rowValues)
             print("studentName = {studentName}".format(studentName = studentName))
 
             scoreEveryDay = getEveryDayScoreFromLine(rowValues)
