@@ -27,18 +27,6 @@ degradeStudentCountColumnNumber = nameColumnNumber - 1
 def getStudentDegradeCount(studentName) :
     pass
 
-
-#从完整的一行中读取学生的姓名
-# 返回与数据库对应的元祖
-# 键：sname
-# 值：学生姓名
-def getStudentNameTuple (line) :
-    return ("sname", line[nameColumnNumber])
-
-#从完整的一行中读取学生的姓名
-def getStudentName (line) :
-    return line[nameColumnNumber]
-
 #求理论和技能的满月平均成绩
 def getAverageScore (scoreTheryAverage, scoreSkillAverage) :
     return (scoreSkillAverage + scoreTheryAverage) / 2
@@ -136,11 +124,6 @@ def getEveryDayScoreFromLine(line) :
 
     return scoreEveryDay
 
-# 判断当前读取的一行是否是空行或者是无效行
-def isNoneLine(line) :
-    if line[nameColumnNumber] == "" :
-        return True
-
 class PickStudent :
     # 按照表格的名称来获取指定的表格
     scoreSheetName = u"成绩单"
@@ -177,6 +160,42 @@ class PickStudent :
 
         return this.rowValueList
 
+    # 判断当前读取的一行是否是空行或者是无效行
+    def isNoneLine(this, line):
+        if line[nameColumnNumber] == "":
+            return True
+
+    # 从完整的一行中读取学生的姓名
+    # 返回与数据库对应的元祖
+    # 键：sname
+    # 值：学生姓名
+    def getStudentNameTuple(this, line):
+        return ("sname", line[nameColumnNumber])
+
+    # 根据指定成绩单，求指定天数的平均成绩
+    # 既可以求理论平均成绩，又可以求技能平均成绩
+    # 该方法时私有方法，不被外界调用
+    def __getAverageScoreByDays(this, scoreList, nday):
+        sum = 0
+
+        try:
+            for s in scoreList[:nday]:
+                if s == "请假" or s == "作弊" or s == "旷考" or s == "休学":
+                    sum += 0
+                else:
+                    sum += s
+        except TypeError as e:
+            pass
+
+        return sum / nday
+
+    # 获取完一行数据后，使用切片，将学生每天的成绩取出来
+    #   数据包含日考、周考和月考
+    def getEveryDayScoreFromLine(this, line):
+        scoreEveryDay = line[nameColumnNumber + 1:len(line) - 1]
+
+        return scoreEveryDay
+
 if __name__ == '__main__':
     mps = PickStudent()
 
@@ -187,23 +206,17 @@ if __name__ == '__main__':
     sheet0 = mps.getSheetByName(PickStudent.scoreSheetName)
 
     for i in range(studentScoreStartPos, studentScoreStopPos):
-        # print(i)
-        # rowValues = sheet0.row_values(i)
         rowValues = mps.getRowValues(i)
 
-        if isNoneLine(rowValues) :
+        if mps.isNoneLine(rowValues) :
             pass
         else :
             print("rowValues = {rowValues}".format(rowValues = rowValues))
-            # print(type(rowValues))
 
-            # studentName = getStudentName(rowValues)
-            # print("studentName = {studentName}".format(studentName = studentName))
-
-            studentName = getStudentNameTuple(rowValues)
+            studentName = mps.getStudentNameTuple(rowValues)
             print("studentName = {studentName}".format(studentName = studentName))
 
-            scoreEveryDay = getEveryDayScoreFromLine(rowValues)
+            scoreEveryDay = mps.getEveryDayScoreFromLine(rowValues)
 
             scoreEveryDayThery = getEveryDayTheryScore(scoreEveryDay)
             scoreEveryDaySkill = getEveryDaySkillScore(scoreEveryDay)
