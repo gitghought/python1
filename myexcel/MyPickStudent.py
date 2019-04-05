@@ -26,6 +26,14 @@ degradeStudentCountColumnNumber = nameColumnNumber - 1
 def getStudentDegradeCount(studentName) :
     pass
 
+
+#从完整的一行中读取学生的姓名
+# 返回与数据库对应的元祖
+# 键：sname
+# 值：学生姓名
+def getStudentNameTuple (line) :
+    return ("sname", line[nameColumnNumber])
+
 #从完整的一行中读取学生的姓名
 def getStudentName (line) :
     return line[nameColumnNumber]
@@ -156,6 +164,12 @@ if __name__ == '__main__':
 
             fiveDayTheryAvg = getFiveDayAverageScore(scoreEveryDayThery)
             fiveDaySkillAvg = getFiveDayAverageScore(scoreEveryDaySkill)
+
+            tenDayTheryAvg = getFiveDayAverageScore(scoreEveryDayThery)
+            tenDaySkillAvg = getFiveDayAverageScore(scoreEveryDaySkill)
+
+            fiftenDayTheryAvg = getFiveDayAverageScore(scoreEveryDayThery)
+            fiftenDaySkillAvg = getFiveDayAverageScore(scoreEveryDaySkill)
 
             # print("fiveDayTheryAvg = {fiveDayTheryAvg}".format(fiveDayTheryAvg=fiveDayTheryAvg))
             # print("fiveDaySkillAvg = {fiveDaySkillAvg}".format(fiveDaySkillAvg=fiveDaySkillAvg))
