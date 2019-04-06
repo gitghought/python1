@@ -21,6 +21,12 @@ keyFiveTimesTheryTenDayTheryAvg= "tenDayTheryAvg"
 keyFiveTimesTheryFiftenDayTheryAvg= "fiftenDayTheryAvg"
 keyFiveTimesTheryMonthTheryAvg= "monthTheryAvg"
 
+keyFiveTimesSkillSname = "sname"
+keyFiveTimesSkillFiveDaySkillAvg= "fiveDaySkillAvg"
+keyFiveTimesSkillTenDaySkillAvg= "tenDaySkillAvg"
+keyFiveTimesSkillFifteenDaySkillAvg= "fiftenDaySkillAvg"
+keyFiveTimesSkillMonthSkillAvg= "monthSkillAvg"
+
 class ScoreToMySQL :
 
     def myConnect(this):
@@ -55,6 +61,67 @@ class ScoreToMySQL :
             this.cursor = this.db.cursor()
 
             return this.cursor
+
+
+    #将封装好数据的字典添加到数据库种
+    # 字典种必须封装表中需要的所有数据
+    def insertIntoFiveTimesSkillDict(this, dict):
+        try :
+            #执行向数据库插入数据的操作
+            this.cursor.execute("insert into "
+                                "fiveTimesSkill ("
+                                "sname,"
+                                "fiveDaySkillAvg,"
+                                "tenDaySkillAvg,"
+                                "fiftenDaySkillAvg,"
+                                "monthSkillAvg"
+                                ") "
+                                "values("
+                                "'{sname}',"
+                                "'{fiveDaySkillAvg}',"
+                                "'{tenDaySkillAvg}',"
+                                "'{fiftenDaySkillAvg}',"
+                                "'{monthSkillAvg}'"
+                                ")".format(
+                sname=dict[keyFiveTimesSkillSname],
+                fiveDaySkillAvg=dict[keyFiveTimesSkillFiveDaySkillAvg],
+                tenDaySkillAvg=dict[keyFiveTimesSkillTenDaySkillAvg],
+                fiftenDaySkillAvg=dict[keyFiveTimesSkillFiftenDaySkillAvg],
+                monthSkillAvg=dict[keyFiveTimesSkillMonthSkillAvg]
+            ))
+        except AttributeError as e:
+            this.cursor = this.getCursor()
+
+        else :
+            pass
+            this.db.commit()
+        finally:
+
+            # 执行向数据库插入数据的操作
+            this.cursor.execute("insert into "
+                                "fiveTimesSkill ("
+                                "sname,"
+                                "fiveDaySkillAvg,"
+                                "tenDaySkillAvg,"
+                                "fiftenDaySkillAvg,"
+                                "monthSkillAvg"
+                                ") "
+                                "values("
+                                "'{sname}',"
+                                "'{fiveDaySkillAvg}',"
+                                "'{tenDaySkillAvg}',"
+                                "'{fiftenDaySkillAvg}',"
+                                "'{monthSkillAvg}'"
+                                ")".format(
+                sname=dict[keyFiveTimesSkillSname],
+                fiveDaySkillAvg=dict[keyFiveTimesSkillFiveDaySkillAvg],
+                tenDaySkillAvg=dict[keyFiveTimesSkillTenDaySkillAvg],
+                fiftenDaySkillAvg=dict[keyFiveTimesSkillFifteenDaySkillAvg],
+                monthSkillAvg=dict[keyFiveTimesSkillMonthSkillAvg]
+            ))
+
+            this.db.commit()
+
     #将封装好数据的字典添加到数据库种
     # 字典种必须封装表中需要的所有数据
     def insertIntoFiveTimesTheryDict(this, dict):
@@ -110,65 +177,6 @@ class ScoreToMySQL :
                 tenDayTheryAvg=dict[keyFiveTimesTheryTenDayTheryAvg],
                 fiftenDayTheryAvg=dict[keyFiveTimesTheryFiftenDayTheryAvg],
                 monthTheryAvg=dict[keyFiveTimesTheryMonthTheryAvg]
-            ))
-
-            this.db.commit()
-
-    #将封装好数据的字典添加到数据库种
-    #没有参数，仅用于测试功能是否可用
-    def insertIntoFiveTimesThery(this):
-        try :
-            #执行向数据库插入数据的操作
-            this.cursor.execute("insert into "
-                            "fiveTimesThery ("
-                            "sname,"
-                            "fiveDayTheryAvg,"
-                            "tenDayTheryAvg,"
-                            "fiftenDayTheryAvg,"
-                            "monthTheryAvg"
-                            ") "
-                            "values("
-                            "'{sname}',"
-                            "'{fiveDayTheryAvg}',"
-                            "'{tenDayTheryAvg}',"
-                            "'{fiftenDayTheryAvg}',"
-                            "'{monthTheryAvg}'"
-                            ")".format(
-                sname="hehehe",
-                fiveDayTheryAvg="10",
-                tenDayTheryAvg="10",
-                fiftenDayTheryAvg="10",
-                monthTheryAvg="10"
-            ))
-        except AttributeError as e:
-            this.cursor = this.getCursor()
-
-        else :
-            pass
-            this.db.commit()
-        finally:
-
-            # 执行向数据库插入数据的操作
-            this.cursor.execute("insert into "
-                                "fiveTimesThery ("
-                                "sname,"
-                                "fiveDayTheryAvg,"
-                                "tenDayTheryAvg,"
-                                "fiftenDayTheryAvg,"
-                                "monthTheryAvg"
-                                ") "
-                                "values("
-                                "'{sname}',"
-                                "'{fiveDayTheryAvg}',"
-                                "'{tenDayTheryAvg}',"
-                                "'{fiftenDayTheryAvg}',"
-                                "'{monthTheryAvg}'"
-                                ")".format(
-                sname="hehehe",
-                fiveDayTheryAvg="10",
-                tenDayTheryAvg="10",
-                fiftenDayTheryAvg="10",
-                monthTheryAvg="10"
             ))
 
             this.db.commit()
