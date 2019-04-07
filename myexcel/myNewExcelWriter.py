@@ -1,11 +1,14 @@
-from myexcel.storetomysql import ScoreToMySQL
-from myexcel.PickStudent import PickStudent
+# from myexcel.PickStudent import PickStudent
+
+from myexcel.storetomysql import  ScoreToMySQL
+
+from myexcel.MyInclude import MyInclude
 
 import xlsxwriter
 
 
 class DictToExcel():
-    fileName = "orderByAvg.xls"
+    fileName = "avg{filename}.xls".format(filename=MyInclude.scoreExcelPrefix)
     studentCount = 34
 
     def __init__(this):
