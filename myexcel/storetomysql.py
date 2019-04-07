@@ -1,4 +1,5 @@
 import pymysql
+from myexcel.MyInclude import MyInclude
 import json
 
 #服务器端的ip地址
@@ -310,8 +311,9 @@ class ScoreToMySQL :
         this.cursor.execute(
             "SELECT * FROM "
             "`fiveTimesThery` "
+            "where sclass = '{sclass}' "
             "order by {orderby} "
-            "desc limit 0,34".format(orderby=orderby)
+            "desc limit 0,34".format(sclass=MyInclude.scoreExcelPrefix,orderby=orderby)
         )
 
         slist= this.__getValuesFromCursor()
