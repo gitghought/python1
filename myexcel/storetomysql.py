@@ -2,20 +2,21 @@ import pymysql
 from myexcel.MyInclude import MyInclude
 import json
 
-#服务器端的ip地址
-serverIP = "localhost"
+class MySQLConnection () :
+    #服务器端的ip地址
+    serverIP = "localhost"
 
-#数据库用户名
-username = "root"
+    #数据库用户名
+    username = "root"
 
-#数据库密码
-password = ""
+    #数据库密码
+    password = ""
 
-#数据库名
-databaseName = "studentscore"
+    #数据库名
+    databaseName = "studentscore"
 
-#在读取数据库中的图片时，使用的地址
-mysqlPrePath = serverIP
+    #在读取数据库中的图片时，使用的地址
+    mysqlPrePath = serverIP
 
 keyFiveTimesClass = "sclass"
 
@@ -63,10 +64,10 @@ class ScoreToMySQL :
     def myConnect(this):
 
         this.db = pymysql.connect(
-            mysqlPrePath,  # 数据库对应的地址
-            username,  # 数据库登录用户名
-            password,  # 数据库登录密码
-            databaseName  # 数据库名称
+            MySQLConnection.mysqlPrePath,  # 数据库对应的地址
+            MySQLConnection.username,  # 数据库登录用户名
+            MySQLConnection.password,  # 数据库登录密码
+            MySQLConnection.databaseName  # 数据库名称
         )
 
         return this.db
@@ -160,31 +161,37 @@ class ScoreToMySQL :
     # 字典种必须封装表中需要的所有数据
     def insertIntoFiveTimesTheryDict(this, dict):
         this.cursor = this.getCursor()
-        #执行向数据库插入数据的操作
-        this.cursor.execute("insert into "
-                            "fiveTimesThery ("
-                            "sname,"
-                            "fiveDayTheryAvg,"
-                            "tenDayTheryAvg,"
-                            "fiftenDayTheryAvg,"
-                            "monthTheryAvg,"
-                            "sclass"
-                            ") "
-                            "values("
-                            "'{sname}',"
-                            "'{fiveDayTheryAvg}',"
-                            "'{tenDayTheryAvg}',"
-                            "'{fiftenDayTheryAvg}',"
-                            "'{monthTheryAvg}',"
-                            "'{sclass}'"
-                            ")".format(
-            sname=dict[keyFiveTimesTherySname],
-            fiveDayTheryAvg=dict[keyFiveTimesTheryFiveDayTheryAvg],
-            tenDayTheryAvg=dict[keyFiveTimesTheryTenDayTheryAvg],
-            fiftenDayTheryAvg=dict[keyFiveTimesTheryFiftenDayTheryAvg],
-            monthTheryAvg=dict[keyFiveTimesTheryMonthTheryAvg],
-            sclass=dict[keyFiveTimesClass]
-        ))
+
+        try:
+
+
+            #执行向数据库插入数据的操作
+            this.cursor.execute("insert into "
+                                "fiveTimesThery ("
+                                "sname,"
+                                "fiveDayTheryAvg,"
+                                "tenDayTheryAvg,"
+                                "fiftenDayTheryAvg,"
+                                "monthTheryAvg,"
+                                "sclass"
+                                ") "
+                                "values("
+                                "'{sname}',"
+                                "'{fiveDayTheryAvg}',"
+                                "'{tenDayTheryAvg}',"
+                                "'{fiftenDayTheryAvg}',"
+                                "'{monthTheryAvg}',"
+                                "'{sclass}'"
+                                ")".format(
+                sname=dict[keyFiveTimesTherySname],
+                fiveDayTheryAvg=dict[keyFiveTimesTheryFiveDayTheryAvg],
+                tenDayTheryAvg=dict[keyFiveTimesTheryTenDayTheryAvg],
+                fiftenDayTheryAvg=dict[keyFiveTimesTheryFiftenDayTheryAvg],
+                monthTheryAvg=dict[keyFiveTimesTheryMonthTheryAvg],
+                sclass=dict[keyFiveTimesClass]
+            ))
+        except pymysql.err.IntegrityError as e :
+            pass
 
         this.db.commit()
 
