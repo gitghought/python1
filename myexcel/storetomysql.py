@@ -16,6 +16,8 @@ databaseName = "studentscore"
 #在读取数据库中的图片时，使用的地址
 mysqlPrePath = serverIP
 
+keyFiveTimesClass = "sclass"
+
 keyFiveTimesTherySname = "sname"
 keyFiveTimesTheryFiveDayTheryAvg= "fiveDayTheryAvg"
 keyFiveTimesTheryTenDayTheryAvg= "tenDayTheryAvg"
@@ -90,6 +92,9 @@ class ScoreToMySQL :
 
             return this.cursor
 
+    # 用于将班级信息组成一个元组
+    def getClassTuple(sclass):
+        return ("sclass", sclass)
 
     #将封装好数据的字典添加到数据库种
     # 字典种必须封装表中需要的所有数据
@@ -153,61 +158,34 @@ class ScoreToMySQL :
     #将封装好数据的字典添加到数据库种
     # 字典种必须封装表中需要的所有数据
     def insertIntoFiveTimesTheryDict(this, dict):
-        try :
-            #执行向数据库插入数据的操作
-            this.cursor.execute("insert into "
-                                "fiveTimesThery ("
-                                "sname,"
-                                "fiveDayTheryAvg,"
-                                "tenDayTheryAvg,"
-                                "fiftenDayTheryAvg,"
-                                "monthTheryAvg"
-                                ") "
-                                "values("
-                                "'{sname}',"
-                                "'{fiveDayTheryAvg}',"
-                                "'{tenDayTheryAvg}',"
-                                "'{fiftenDayTheryAvg}',"
-                                "'{monthTheryAvg}'"
-                                ")".format(
-                sname=dict[keyFiveTimesTherySname],
-                fiveDayTheryAvg=dict[keyFiveTimesTheryFiveDayTheryAvg],
-                tenDayTheryAvg=dict[keyFiveTimesTheryTenDayTheryAvg],
-                fiftenDayTheryAvg=dict[keyFiveTimesTheryFiftenDayTheryAvg],
-                monthTheryAvg=dict[keyFiveTimesTheryMonthTheryAvg]
-            ))
-        except AttributeError as e:
-            this.cursor = this.getCursor()
+        this.cursor = this.getCursor()
+        #执行向数据库插入数据的操作
+        this.cursor.execute("insert into "
+                            "fiveTimesThery ("
+                            "sname,"
+                            "fiveDayTheryAvg,"
+                            "tenDayTheryAvg,"
+                            "fiftenDayTheryAvg,"
+                            "monthTheryAvg,"
+                            "sclass"
+                            ") "
+                            "values("
+                            "'{sname}',"
+                            "'{fiveDayTheryAvg}',"
+                            "'{tenDayTheryAvg}',"
+                            "'{fiftenDayTheryAvg}',"
+                            "'{monthTheryAvg}',"
+                            "'{sclass}'"
+                            ")".format(
+            sname=dict[keyFiveTimesTherySname],
+            fiveDayTheryAvg=dict[keyFiveTimesTheryFiveDayTheryAvg],
+            tenDayTheryAvg=dict[keyFiveTimesTheryTenDayTheryAvg],
+            fiftenDayTheryAvg=dict[keyFiveTimesTheryFiftenDayTheryAvg],
+            monthTheryAvg=dict[keyFiveTimesTheryMonthTheryAvg],
+            sclass=dict[keyFiveTimesClass]
+        ))
 
-        else :
-            pass
-            this.db.commit()
-        finally:
-
-            # 执行向数据库插入数据的操作
-            this.cursor.execute("insert into "
-                                "fiveTimesThery ("
-                                "sname,"
-                                "fiveDayTheryAvg,"
-                                "tenDayTheryAvg,"
-                                "fiftenDayTheryAvg,"
-                                "monthTheryAvg"
-                                ") "
-                                "values("
-                                "'{sname}',"
-                                "'{fiveDayTheryAvg}',"
-                                "'{tenDayTheryAvg}',"
-                                "'{fiftenDayTheryAvg}',"
-                                "'{monthTheryAvg}'"
-                                ")".format(
-                sname=dict[keyFiveTimesTherySname],
-                fiveDayTheryAvg=dict[keyFiveTimesTheryFiveDayTheryAvg],
-                tenDayTheryAvg=dict[keyFiveTimesTheryTenDayTheryAvg],
-                fiftenDayTheryAvg=dict[keyFiveTimesTheryFiftenDayTheryAvg],
-                monthTheryAvg=dict[keyFiveTimesTheryMonthTheryAvg]
-            ))
-
-            this.db.commit()
+        this.db.commit()
 
         # 将封装好数据的字典添加到数据库种
         # 字典种必须封装表中需要的所有数据
@@ -333,7 +311,7 @@ class ScoreToMySQL :
             "SELECT * FROM "
             "`fiveTimesThery` "
             "order by {orderby} "
-            "desc limit 0,26".format(orderby=orderby)
+            "desc limit 0,34".format(orderby=orderby)
         )
 
         slist= this.__getValuesFromCursor()
