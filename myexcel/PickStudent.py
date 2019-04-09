@@ -1,9 +1,9 @@
 import xlrd
 from myexcel import storetomysql
 
+from myexcel.MyInclude import MyInclude
+
 class PickStudent ():
-    # 按照表格的名称来获取指定的表格
-    scoreSheetName = u"成绩单"
 
     # 在一个班级里，最多允许有60人
     studentLimitation = 60
@@ -28,10 +28,16 @@ class PickStudent ():
         this.workbook = xlrd.open_workbook(this.path)
         return this.workbook
 
+    #根据文件路径打开Excel表格文件
+    # 根据指定的路径打开excel表格
+    def myXlsOpenWithPath(this, path):
+        this.workbook = xlrd.open_workbook(path)
+        return this.workbook
+
     #打开Excel表格文件中的指定表格
     # 返回指定表格对象
     def getSheetByName(this):
-        this.sheet = this.workbook.sheet_by_name(this.scoreSheetName)
+        this.sheet = this.workbook.sheet_by_name(MyInclude.scoreSheetName)
         return this.sheet
 
     # 从已经打开的表格种获取指定行的所有列的值
