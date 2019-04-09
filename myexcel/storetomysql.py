@@ -32,10 +32,20 @@ keyFiveTimesSkillTenDaySkillAvg= "tenDaySkillAvg"
 keyFiveTimesSkillFifteenDaySkillAvg= "fiftenDaySkillAvg"
 keyFiveTimesSkillMonthSkillAvg= "monthSkillAvg"
 
+class ScoreTheryObject() :
+    sname = ""
+    srank = ""
+    sclass = ""
+    sFiveDayTheryAvg  = ""
+    sTenDayTheryAvg = ""
+    sFiftenDayTheryAvg = ""
+    sMonthTheryAvg = ""
+
+
 class ScoreToMySQL :
     keySname = "sname"
     keySkillAvgList = [ "fiveDaySkillAvg", "tenDaySkillAvg", "fiftenDaySkillAvg", "monthSkillAvg" ]
-    keyTheryAvgList = [ "fiveDayTheryAvg", "tenDayTheryAvg", "fiftenDayTheryAvg", "monthTheryAvg" ]
+    keyTheryAvgList = [ "fiveDayTheryAvg", "tenDayTheryAvg", "fiftenDayTheryAvg", "monthTheryAvg" , "srank"]
     keyEveryDayTheryList = [
         "day0",
         "day1",
@@ -279,6 +289,28 @@ class ScoreToMySQL :
         this.db.commit()
 
     # 当执行完数据库查询操作后，
+    # 将查询的数据取出保存到一个对象
+    def getObjFromCursor (this):
+
+        olist = []
+
+        rows = this.cursor.fetchall()
+
+        for row in rows :
+            sto = ScoreTheryObject ()
+            sto.sname = row[1]
+            sto.sFiveDayTheryAvg = row[2]
+            sto.sTenDayTheryAvg = row[3]
+            sto.sFiftenDayTheryAvg = row[4]
+            sto.sMonthTheryAvg = row[5]
+            sto.sclass = row[6]
+            sto.srank = row[7]
+
+            olist.append(sto)
+
+        return olist
+
+    # 当执行完数据库查询操作后，
     # 将查询的数据取出保存到字典
     # 再将每个字典添加到一个列表
     # 最后将列表返回
@@ -310,6 +342,24 @@ class ScoreToMySQL :
 
         return slist
 
+    def selectFromFiveTimesTheryWithOrderByInNameList(this,orderby, nameListStr):
+        this.getCursor()
+        this.cursor.execute(""
+            "select c.* from "
+            "   (select f.*, @rank:=@rank + 1 as num  "
+            "        from fivetimesthery f , (select @rank:= 0) b "
+            "        order by {orderby}) c "
+            # "where sname in ('李浩','周帅')".format(orderby = orderby))
+            "where sname in ({nameListstr})".format(nameListstr = nameListStr, orderby = orderby))
+
+        olist = this.getObjFromCursor()
+
+        print(olist)
+
+        this.db.commit()
+
+        return olist
+
     # 从数据库中检索数据
     # orderby指定排序的规则
     # 该函数返回的是一个由字段做元素的列表
@@ -322,6 +372,12 @@ class ScoreToMySQL :
             "order by {orderby} "
             "desc limit 0,34".format(sclass=MyInclude.scoreExcelPrefix,orderby=orderby)
         )
+        # this.cursor.execute(
+        #     "SELECT * FROM "
+        #     "`fiveTimesThery` "
+        #     "order by {orderby} "
+        #     "desc limit 0,34".format(sclass=MyInclude.scoreExcelPrefix,orderby=orderby)
+        # )
 
         slist= this.__getValuesFromCursor()
 
@@ -376,10 +432,22 @@ if __name__ == '__main__':
     #创建数据库对象
     mstm = ScoreToMySQL()
 
+    """"
+        from fivetimesthery f , (select @rank:= 0) b "
+            "        order by {orderby}) c "
+            # "where sname in ('李浩','周帅')".
+    
+    """
+    olist = mstm.selectFromFiveTimesTheryWithOrderByInNameList(orderby="fiftenDayTheryAvg", nameListStr="'李浩','周帅'")
+
+
+
     # # 将准备的字典数据添加到数据库
-    mstm.insertIntoEveryDayTheryDict(dictScore)
+    # mstm.insertIntoEveryDayTheryDict(dictScore)
 
     # mstm.selectFromFiveTimesThery(mstm.keyTheryAvgList[3])
+
+    # mstm.insertIntoFiveTimesSkillDict()
 
     # 关闭本次数据库连接
     mstm.disConnect()
