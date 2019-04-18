@@ -15,7 +15,8 @@ from docx.shared import Inches
 #陈鹏程
 
 #服务器端的ip地址
-serverIP = "10.101.214.26"
+# serverIP = "10.101.214.26"
+serverIP = "10.56.33.12"
 
 #在获取服务器端的图片时，使用的地址前缀
 serverPrePath = "http://{serverIP}:8080".format(serverIP=serverIP)
@@ -59,6 +60,7 @@ def readMySQLAndWriteQuestToWord(document, qsnId) :
     mydatas = mcursor.fetchall()
 
     for dat in mydatas:
+        #读取题干
         print(dat[1])
         #判断题干中是否有图片
         # if分支表示有图片，则将图片写入到文件
@@ -105,7 +107,6 @@ def readMySQLAndWriteQuestToWord(document, qsnId) :
 
             mpara = document.add_paragraph(choicePreList[i-1])
 
-
             if dat[2].find("img src") != -1 :
                 run = mpara.add_run()
 
@@ -138,6 +139,11 @@ def readMySQLAndWriteQuestToWord(document, qsnId) :
 
                 # writeToWordParagraph(document, dictChoices["{pos}".format(pos = i)]["xx"], alwaysMistakeQuestion)
                 document.save(alwaysMistakeQuestion)
+
+        # print(dat[3])
+
+        dpara = document.add_paragraph("答案：")
+        dpara.add_run(choicePreList[dat[3]-1])
 
         #关闭所有已经打开的文件
         # 防止因为文件忘记关闭导致的内存泄漏
